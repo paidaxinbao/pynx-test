@@ -1,0 +1,138 @@
+Source: pynx
+Section: science
+Priority: optional
+Maintainer: Debian Science Maintainers <debian-science-maintainers@lists.alioth.debian.org>
+Uploaders: Picca Frédéric-Emmanuel <picca@debian.org>
+Build-Depends: cython3,
+               debhelper-compat (= 12),
+               dh-python,
+               python3-all-dev,
+               python3-fabio <!nodoc>,
+               python3-gpyfft <!nodoc>,
+               python3-h5py <!nodoc>,
+               python3-matplotlib <!nodoc>,
+               python3-nbsphinx <!nodoc>,
+               python3-networkx <!nodoc>,
+               python3-numba,
+               python3-numpy,
+               python3-pyopencl <!nodoc>,
+               python3-scipy,
+               python3-setuptools,
+               python3-skimage <!nodoc>,
+               python3-sphinx <!nodoc>,
+               python3-tk <!nodoc>,
+               sphinx-common
+Standards-Version: 4.1.0
+Homepage: http://ftp.esrf.fr/pub/scisoft/PyNX/doc/
+X-Python3-Version: >= 3.2
+
+Package: pynx
+Architecture: all
+Depends: python3-pynx (>= ${source:Version}),
+         ${misc:Depends},
+         ${python3:Depends}
+Description: Python tools for Nano-structures Crystallography (Scripts)
+ PyNX stands for *Python tools for Nano-structures Crystallography*.
+ It is a python library with the following main modules:
+ .
+ 1) pynx.scattering: *X-ray scattering computing using graphical
+ processing units*, allowing up to 2.5x10^11 reflections/atoms/seconds
+ (single nVidia Titan X). The sub-module``pynx.scattering.gid`` can be
+ used for *Grazing Incidence Diffraction* calculations, using the
+ Distorted Wave Born Approximation
+ .
+ 2) pynx.ptycho : simulation and analysis of experiments using the
+ *ptychography* technique, using either CPU (deprecated) or GPU using
+ OpenCL.  Examples are available in the pynx/Examples
+ directory. Scripts for analysis of raw data from beamlines are also
+ available, as well as using or producing ptychography data sets in
+ CXI (Coherent X-ray Imaging) format.
+ .
+ 3) pynx.wavefront: *X-ray wavefront propagation* in the near, far
+ field, or continuous (examples available at the end of
+ ``wavefront.py``).  Also provided are sub-modules for Fresnel
+ propagation and simulation of the illumination from a Fresnel Zone
+ Plate, both using OpenCL for high performance computing.
+ .
+ 4) pynx.cdi: *Coherent Diffraction Imaging* reconstruction algorithms
+ using GPU.
+ .
+ In addition, it includes :doc:`scripts <scripts/index>` for
+ command-line processing of ptychography data from generic CXI data
+ (pynx-cxipty.py) or specific to beamlines (pynx-id01pty.py,
+ pynx-id13pty.py,...).
+
+Package: python3-pynx
+Architecture: any
+Section: python
+Depends: ${misc:Depends}, ${python3:Depends}, ${shlibs:Depends}
+Suggests: python-pynx-doc
+Description: Python tools for Nano-structures Crystallography (Python 3)
+ PyNX stands for *Python tools for Nano-structures Crystallography*.
+ It is a python library with the following main modules:
+ .
+ 1) pynx.scattering: *X-ray scattering computing using graphical
+ processing units*, allowing up to 2.5x10^11 reflections/atoms/seconds
+ (single nVidia Titan X). The sub-module``pynx.scattering.gid`` can be
+ used for *Grazing Incidence Diffraction* calculations, using the
+ Distorted Wave Born Approximation
+ .
+ 2) pynx.ptycho : simulation and analysis of experiments using the
+ *ptychography* technique, using either CPU (deprecated) or GPU using
+ OpenCL.  Examples are available in the pynx/Examples
+ directory. Scripts for analysis of raw data from beamlines are also
+ available, as well as using or producing ptychography data sets in
+ CXI (Coherent X-ray Imaging) format.
+ .
+ 3) pynx.wavefront: *X-ray wavefront propagation* in the near, far
+ field, or continuous (examples available at the end of
+ ``wavefront.py``).  Also provided are sub-modules for Fresnel
+ propagation and simulation of the illumination from a Fresnel Zone
+ Plate, both using OpenCL for high performance computing.
+ .
+ 4) pynx.cdi: *Coherent Diffraction Imaging* reconstruction algorithms
+ using GPU.
+ .
+ In addition, it includes :doc:`scripts <scripts/index>` for
+ command-line processing of ptychography data from generic CXI data
+ (pynx-cxipty.py) or specific to beamlines (pynx-id01pty.py,
+ pynx-id13pty.py,...).
+ .
+ This package installs the library for Python 3.
+
+Package: python-pynx-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}, ${sphinxdoc:Depends}
+Description: Python tools for Nano-structures Crystallography (common documentation)
+ PyNX stands for *Python tools for Nano-structures Crystallography*.
+ It is a python library with the following main modules:
+ .
+ 1) pynx.scattering: *X-ray scattering computing using graphical
+ processing units*, allowing up to 2.5x10^11 reflections/atoms/seconds
+ (single nVidia Titan X). The sub-module``pynx.scattering.gid`` can be
+ used for *Grazing Incidence Diffraction* calculations, using the
+ Distorted Wave Born Approximation
+ .
+ 2) pynx.ptycho : simulation and analysis of experiments using the
+ *ptychography* technique, using either CPU (deprecated) or GPU using
+ OpenCL.  Examples are available in the pynx/Examples
+ directory. Scripts for analysis of raw data from beamlines are also
+ available, as well as using or producing ptychography data sets in
+ CXI (Coherent X-ray Imaging) format.
+ .
+ 3) pynx.wavefront: *X-ray wavefront propagation* in the near, far
+ field, or continuous (examples available at the end of
+ ``wavefront.py``).  Also provided are sub-modules for Fresnel
+ propagation and simulation of the illumination from a Fresnel Zone
+ Plate, both using OpenCL for high performance computing.
+ .
+ 4) pynx.cdi: *Coherent Diffraction Imaging* reconstruction algorithms
+ using GPU.
+ .
+ In addition, it includes :doc:`scripts <scripts/index>` for
+ command-line processing of ptychography data from generic CXI data
+ (pynx-cxipty.py) or specific to beamlines (pynx-id01pty.py,
+ pynx-id13pty.py,...).
+ .
+ This is the common documentation package.

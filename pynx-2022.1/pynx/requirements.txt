@@ -1,0 +1,38 @@
+# This is a minimal setp of required packages to use most features
+# in PyNX. It includes OpenCL by default.
+#
+# See requirements_cuda.txt and requirements_gui.txt for extras
+# to use CUDA some graphical user interfaces elements.
+#
+# Installing CUDA is *highly* recommended if you have an nvidia card as
+# performance will be better than with OpenCL.
+#
+# You can install PyNX from it directory using either:
+# * pip install .
+# * pip install .[cuda]
+# * pip install .[cuda,gui]
+# * pip install .[cuda,gui,mpi]
+#
+# Or from an archive (or using git+https):
+# * pip install http://ftp.esrf.fr/pub/scisoft/PyNX/pynx-devel-nightly.tar.bz2[cuda,gui, mpi]
+#
+numpy>=1.12
+scipy>=1.6.0
+matplotlib
+setuptools
+cython
+scikit-image
+h5py>=2.9
+hdf5plugin
+fabio
+silx
+packaging
+psutil
+scikit-learn
+mako
+pyopencl
+# This is now the base GPU FFT library (CUDA or OpenCL).
+# scikit-cuda and gpyfft can still be used instead
+pyvkfft>=2022.1
+# numba can be used for some experimental features in CDI
+# numba

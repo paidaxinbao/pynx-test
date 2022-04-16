@@ -1,0 +1,178 @@
+// Convolution kernels with a variable size kernel. Artefacts will occur with too large gaussian widths compared to
+// the kernel size (FWHM = 2.35*sigma, FH@10% = 4.3*sigma)
+// The following parameters must be defined externally:
+// #define BLOCKSIZE 32
+// #define HALFBLOCK 15
+
+
+/// get pixel coordinate in array
+int ixyz(const int ix, const int iy, const int iz, const int nx, const int ny, const int nz)
+{
+  int iix = (ix + nx)%nx;
+  int iiy = (iy + ny)%ny;
+  int iiz = (iz + nz)%nz;
+  return (iiz * ny + iiy) * nx + iix;
+}
+
+
+/** Perform a 1D gaussian convolution on BLOCKSIZE points intervals per thread along the x-axis.
+* This applies to a complex array, both real and imaginary parts are independently convolved.
+* The 1D kernel size is 2*HALFBLOCK+1. Convolution is done by warping across boundaries.
+*/
+__kernel void gauss_convol_complex_x(__global float2 *d, const float sigma, const int nx, const int ny, const int nz)
+{
+    const int tid = get_local_id(0);
+    const int iy = get_global_id(1);
+    const int iz = get_global_id(2);
+    __local float2 v[2 * BLOCKSIZE];
+    __local float g[BLOCKSIZE];
+    g[tid] = exp(-0.5f*(float)(tid-HALFBLOCK)*(float)(tid-HALFBLOCK)/(sigma*sigma));
+    barrier(CLK_LOCAL_MEM_FENCE);
+    if(tid==(BLOCKSIZE-1))
+    {
+        g[BLOCKSIZE-1] = g[0];
+        for(int i=1; i<(BLOCKSIZE-1);i++)
+        {
+            g[BLOCKSIZE-1] += g[i];
+        }
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+
+    // Normalisation
+    if(tid<(BLOCKSIZE-1)) g[tid] /= g[BLOCKSIZE-1];
+
+    // Keep a copy of first block for wrapped-around convolution
+    // (only the first half-block is used)
+    __local float2 v0[BLOCKSIZE];
+    v0[tid] = d[ixyz(tid,iy,iz,nx,ny,nz)];
+
+    barrier(CLK_LOCAL_MEM_FENCE);
+
+    for(int j=0 ; j <nx-HALFBLOCK; j += BLOCKSIZE)
+    {
+        const int ix = tid + j;
+
+        if(j==0) v[tid] = d[ixyz(ix-HALFBLOCK,iy,iz,nx,ny,nz)];
+        else v[tid] = v[tid+BLOCKSIZE];
+
+        if(ix-HALFBLOCK+BLOCKSIZE >= nx) v[tid+BLOCKSIZE] = v0[(ix-HALFBLOCK+BLOCKSIZE) % nx];
+        else v[tid+BLOCKSIZE] = d[ixyz(ix-HALFBLOCK+BLOCKSIZE,iy,iz,nx,ny,nz)];
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+        float2 v2 = v[tid]*g[0];
+        for(unsigned int i=1;i<(BLOCKSIZE-1);i++)
+        {
+           v2 += v[tid+i] * g[i];
+        }
+        if(ix<nx) d[ixyz(ix,iy,iz,nx,ny,nz)] = v2;
+        barrier(CLK_LOCAL_MEM_FENCE);
+    }
+}
+
+/** Perform a 1D gaussian convolution on BLOCKSIZE points intervals per thread along the y-axis.
+* This applies to a complex array, both real and imaginary parts are independently convolved.
+* The 1D kernel size is 2*HALFBLOCK+1. Convolution is done by warping across boundaries.
+*/
+__kernel void gauss_convol_complex_y( __global float2* d, const float sigma, const int nx, const int ny, const int nz)
+{
+    const int ix = get_global_id(0);
+    const int tid = get_local_id(1);
+    const int iz = get_global_id(2);
+    __local float2 v[2 * BLOCKSIZE];
+    __local float g[BLOCKSIZE];
+    g[tid] = exp(-0.5f*(float)(tid-HALFBLOCK)*(float)(tid-HALFBLOCK)/(sigma*sigma));
+    barrier(CLK_LOCAL_MEM_FENCE);
+    if(tid==(BLOCKSIZE-1))
+    {
+        g[BLOCKSIZE-1] = g[0];
+        for(int i=1; i<(BLOCKSIZE-1);i++)
+        {
+            g[BLOCKSIZE-1] += g[i];
+        }
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+
+    // Normalisation
+    if(tid<(BLOCKSIZE-1)) g[tid] /= g[BLOCKSIZE-1];
+
+    // Keep a copy of first block for wrapped-around convolution
+    // (only the first half-block is used)
+    __local float2 v0[BLOCKSIZE];
+    v0[tid] = d[ixyz(ix,tid,iz,nx,ny,nz)];
+
+    barrier(CLK_LOCAL_MEM_FENCE);
+
+    for(int j=0 ; j <ny-HALFBLOCK; j += BLOCKSIZE)
+    {
+        const int iy = tid + j;
+
+        if(j==0) v[tid] = d[ixyz(ix,iy-HALFBLOCK,iz,nx,ny,nz)];
+        else v[tid] = v[tid+BLOCKSIZE];
+
+        if(iy-HALFBLOCK+BLOCKSIZE >= ny) v[tid+BLOCKSIZE] = v0[(iy-HALFBLOCK+BLOCKSIZE) % ny];
+        else v[tid+BLOCKSIZE] = d[ixyz(ix,iy-HALFBLOCK+BLOCKSIZE,iz,nx,ny,nz)];
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+        float2 v2 = v[tid]*g[0];
+        for(unsigned int i=1;i<(BLOCKSIZE-1);i++)
+        {
+           v2 += v[tid+i] * g[i];
+        }
+        if(iy<ny) d[ixyz(ix,iy,iz,nx,ny,nz)] = v2;
+        barrier(CLK_LOCAL_MEM_FENCE);
+    }
+}
+
+/** Perform a 1D gaussian convolution on BLOCKSIZE points intervals per thread along the z-axis.
+* This applies to a complex array, both real and imaginary parts are independently convolved.
+* The 1D kernel size is 2*HALFBLOCK+1. Convolution is done by warping across boundaries.
+*/
+__kernel void gauss_convol_complex_z( __global float2* d, const float sigma, const int nx, const int ny, const int nz)
+{
+    const int ix = get_global_id(0);
+    const int iy = get_global_id(1);
+    const int tid = get_local_id(2);
+    __local float2 v[2 * BLOCKSIZE];
+    __local float g[BLOCKSIZE];
+    g[tid] = exp(-0.5f*(float)(tid-HALFBLOCK)*(float)(tid-HALFBLOCK)/(sigma*sigma));
+    barrier(CLK_LOCAL_MEM_FENCE);
+    if(tid==(BLOCKSIZE-1))
+    {
+        g[BLOCKSIZE-1] = g[0];
+        for(int i=1; i<(BLOCKSIZE-1);i++)
+        {
+            g[BLOCKSIZE-1] += g[i];
+        }
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+
+    // Normalisation
+    if(tid<(BLOCKSIZE-1)) g[tid] /= g[BLOCKSIZE-1];
+
+    // Keep a copy of first block for wrapped-around convolution
+    // (only the first half-block is used)
+    __local float2 v0[BLOCKSIZE];
+    v0[tid] = d[ixyz(ix,iy,tid,nx,ny,nz)];
+
+    barrier(CLK_LOCAL_MEM_FENCE);
+
+    for(int j=0 ; j <nz-HALFBLOCK; j += BLOCKSIZE)
+    {
+        const int iz = tid + j;
+
+        if(j==0) v[tid] = d[ixyz(ix,iy,iz-HALFBLOCK,nx,ny,nz)];
+        else v[tid] = v[tid+BLOCKSIZE];
+
+        if(iz-HALFBLOCK+BLOCKSIZE >= nz) v[tid+BLOCKSIZE] = v0[(iz-HALFBLOCK+BLOCKSIZE) % nz];
+        else v[tid+BLOCKSIZE] = d[ixyz(ix,iy,iz-HALFBLOCK+BLOCKSIZE,nx,ny,nz)];
+
+        barrier(CLK_LOCAL_MEM_FENCE);
+        float2 v2 = v[tid]*g[0];
+        for(int i=1;i<(BLOCKSIZE-1);i++)
+        {
+           v2 += v[tid+i] * g[i];
+        }
+        if(iz<nz) d[ixyz(ix,iy,iz,nx,ny,nz)] = v2;
+        barrier(CLK_LOCAL_MEM_FENCE);
+    }
+}

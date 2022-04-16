@@ -1,0 +1,4 @@
+# Extra requirement to use CUDA for (highly recommended)
+# Same as using ``pip install pynx[cuda]``
+-r requirements.txt
+pycuda>=2021.1

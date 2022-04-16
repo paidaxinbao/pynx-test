@@ -1,0 +1,9 @@
+# Extra requirements which provide support for widgets,
+# and also enable the silx viewer with its 3D view.
+# Same as using ``pip install pynx[gui]``
+-r requirements.txt
+ipywidgets
+jupyter
+pyqt5
+ipympl
+pyopengl

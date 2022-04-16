@@ -1,0 +1,34 @@
+*.py[cod]
+*.bak
+
+# Cython files
+pynx/cpu.c
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+temp
+develop-eggs
+
+#PyCharm
+.idea
+Result*
+README.html
+make.bat
+log.txt
+cpu.c
+*.pickle
+*.doctree
+*.html
+doc/ybuild
+.ipynb_checkpoints

@@ -1,0 +1,154 @@
+# This file will be executed as a python file to interpret all parameters
+# Some formulas using z1, z2, etc... may be used to compute detector_distance and pixel_size
+# The numpy module can be used as 'np', and fabio can also be used
+
+##################################################################
+#
+# Experiment & data parameters
+#
+##################################################################
+
+# Data prefix
+# %d is the placeholder for the distance index, %04d for the frame index
+data_dir = "data/"
+prefix = "alcu_25nm_11500adu_"
+dark_name = data_dir + prefix + "%d_/dark.edf"
+ref_name = data_dir + prefix + "%d_/refHST%04d.edf"
+img_name = data_dir + prefix + "%d_/" + prefix + "%d_%04d.edf"
+
+# Result prefix (can include a directory) - data_dir is not prepended
+prefix_result = "results/test01/alcu_25nm_11500adu"
+
+# Number of distances
+nz = 4
+
+# Reference plane against which the images will be aligned
+reference_plane = 3
+
+# Padding value (0 to disable)
+# The total size along each dimension should be compatible with FFT, i.e. the
+# prime decomposition should include only 2,3,5,7
+padding = 256
+
+# Total list of frames used [first ; last[
+projection_range = 0, 3203+1
+
+# Initial delta/beta value (for Paganin, CTF or constraint during iterative part)
+delta_beta = 530
+
+# Wavelength in meters
+wavelength=12.3984e-10/29.6
+
+# Effective propagation distances in meters
+detector_distance = None  # See below
+
+# Magnification factors
+magnification = None  # See below
+
+# Effective Pixel size in meters (it will be multiplied by rebin_n)
+pixel_size = None  # See below
+
+### Here are defined the 4 values for detector_distance and magnification
+### and the pixel size
+### The values can either be given or calculated
+### The pixel size must always correspond to the first distance, (magnification[0]=1)
+
+if True:
+    # Just give the values
+    detector_distance = np.array([0.02784876, 0.02877057, 0.03243128, 0.04139726])
+    magnification = detector_distance[0] / detector_distance  # Only values relative to first distance are needed
+    pixel_size = 25e-9
+else:
+    # Or calculate them using python
+    sx0h = 0.5881388245713222 #1.077165773192669 for 75nm.
+    sx0v = 0.5358911314682753 #1.110243284221266 for 75nm.
+    sx = []
+    for iz in range(1,nz+1):
+        f = fabio.open(data_dir+img_name%(iz,iz,0))
+        motor = {}
+        for k,v in zip(f.header['motor_mne'].split(), f.header['motor_pos'].split()):
+            motor[k] = float(v)
+        sx.append(motor['sx'])
+    sx = np.array(sx)
+    print("SX:", sx)
+
+    z1_2 =  0.753965501232698; # total distance focus- detector (in m)
+    z1h = (sx-sx0h)/1000; # distance source-sample
+    z1v = (sx-sx0v)/1000; # distance source-sample
+    pixel_size_orig = 6.5e-07  # real detector pixel size, no magnification
+    z2h = z1_2 - z1h; #!
+    z2v = z1_2 - z1v; #!
+    # print(z1h, z1v)
+    # print(z2h, z2v)
+
+    # effective propagation distances z1*z2/(z1+z2)
+    z1 = 0.5*(z1h+z1v)
+    z2 = 0.5*(z2h+z2v)
+    detector_distance = z1*z2/(z1+z2)
+    magnification = z1_2 / z1
+    pixel_size_z = pixel_size_orig / (z1_2 / z1)
+    pixel_size = pixel_size_z[0]
+
+print("Effective propagation distance:", detector_distance)
+print("Magnification:", magnification)
+print("Effective pixel size: %6.2fnm" %(pixel_size * 1e9))
+
+#######################################################################
+#
+# Export parameters
+#
+#######################################################################
+
+# Save computed phases from pynx in one hdf5 file per chunk
+save_phase_chunks = False
+
+# Save edf files with phases
+save_edf = True
+
+##################################################################
+#
+# PyNX parameters
+#
+##################################################################
+
+# Number of coherent probe modes. If >1, the (constant) probe mode coefficients
+# will linearly vary as a function of the projection index.
+# nb_probe=2 will refine two probe modes, linearly varying from the first
+# to the last optimised projection.
+nb_probe = 1
+
+# Beta coefficient for the RAAR or DRAP algorithm. Not to be mistaken
+# with the refraction index beta
+beta = 0.9
+
+# Algorithm chain, which should be read from right to left
+# Each step is either an algorithm (Paganin, CTF, DM or AP),
+# using **N to specify the number of cycles used for AP and DM.
+# Paganin or CTF should come first.
+#
+# Or a modification of one of the following parameters:
+# obj_smooth=0.5 : object smoothing parameter for AP or DM (0 to disable)
+# obj_min=0.9 : object min amplitude
+# obj_max=1.9 : object max amplitude (using min=max=1 makes a pure phase object)
+# delta_beta=1: either use 0 or 1 to disable/enable the delta/beta
+#               constraint, or give a value > 1 to change the initial
+#               delta_beta value (which automatically activates
+#               the constraint)
+# probe=0 or 1: activate the probe optimisation (1 by default)
+# obj=0 or 1: activate the object (projections) optimisation (1 by default)
+# beta=0.9: change the RAAR/DRAP beta coefficient
+#
+# This should be given as a string, between "", without spaces.
+# Example algorithms beginning with Paganin or CTF:
+#   algorithm = "AP**40,delta_beta=0,AP**20,obj_smooth=0.1,DM**10,obj_smooth=0.2,Paganin"
+#   algorithm = "AP**40,delta_beta=0,AP**20,obj_smooth=0.1,DM**10,obj_smooth=0.2,CTF"
+# Or simpler (recommended):
+#   algorithm = "AP**40,obj_smooth=0.1,Paganin"
+#   algorithm = "AP**40,obj_smooth=0.1,CTF"
+algorithm = "AP**40,obj_smooth=0.1,CTF"
+
+# This is the number of projections handled in GPU memory simultaneously
+# This should eventually be automatically determined (need 1 or >= 3 stacks)
+# Examples: 2520 x 2120, no padding => 20 max
+# Examples: 2520 x 2120, padding=128 => 16 max
+stack_size = 16

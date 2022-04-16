@@ -1,0 +1,3 @@
+# Extra requirement to be able to use MPI
+-r requirements.txt
+mpi4py

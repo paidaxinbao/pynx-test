@@ -1,0 +1,21 @@
+From: Commissionning HERMES <com-hermes@hermes17.exp.synchrotron-soleil.fr>
+Date: Fri, 29 Oct 2021 09:39:19 +0200
+Subject: remove whell dependency for Debian
+
+---
+ setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/setup.py b/setup.py
+index 7942058..308d24f 100644
+--- a/setup.py
++++ b/setup.py
+@@ -16,7 +16,7 @@ from setuptools.command.sdist import sdist as su_sdist
+ from pynx.version import __version__, get_git_version, get_git_date
+ 
+ cmdclass = {}
+-setup_requires = ['setuptools', 'wheel']
++setup_requires = ['setuptools']
+ if 'x86_64' in platform.machine():
+     try:
+         from Cython.Distutils import build_ext
