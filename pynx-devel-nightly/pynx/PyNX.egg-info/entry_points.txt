@@ -1,0 +1,22 @@
+[console_scripts]
+pynx-cdi-analysis.py = pynx.cdi.scripts.pynx_cdi_analysis:main
+pynx-cdi-regrid.py = pynx.cdi.scripts.pynx_cdi_regrid:main
+pynx-cristalpty.py = pynx.ptycho.scripts.pynx_cristalpty:main
+pynx-cxipty.py = pynx.ptycho.scripts.pynx_cxipty:main
+pynx-id01cdi.py = pynx.cdi.scripts.pynx_id01cdi:main
+pynx-id01pty.py = pynx.ptycho.scripts.pynx_id01pty:main
+pynx-id10cdi.py = pynx.cdi.scripts.pynx_id10cdi:main
+pynx-id13pty.py = pynx.ptycho.scripts.pynx_id13pty:main
+pynx-id16a-holotomo.py = pynx.holotomo.scripts.pynx_id16a_holotomo:main
+pynx-id16a-nfpty.py = pynx.ptycho.scripts.pynx_id16a_nfpty:main
+pynx-id16apty.py = pynx.ptycho.scripts.pynx_id16apty:main
+pynx-info.py = pynx.scripts.pynx_info:main
+pynx-nanomaxpty.py = pynx.ptycho.scripts.pynx_nanomaxpty:main
+pynx-nanoscopiumpty.py = pynx.ptycho.scripts.pynx_nanoscopiumpty:main
+pynx-ptycho-analysis.py = pynx.ptycho.scripts.pynx_ptycho_analysis:main
+pynx-ptypy.py = pynx.ptycho.scripts.pynx_ptypy:main
+pynx-resolution-FSC.py = pynx.utils.scripts.pynx_resolution_FSC:main
+pynx-simulationpty.py = pynx.ptycho.scripts.pynx_simulationpty:main
+pynx-test.py = pynx.scripts.pynx_test:main
+pynx-tps25apty.py = pynx.ptycho.scripts.pynx_tps25apty:main
+

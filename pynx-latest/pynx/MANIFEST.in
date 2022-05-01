@@ -1,0 +1,17 @@
+include pynx/opencl/*.cl
+include pynx/cuda/*.cu
+include pynx/cdi/opencl/*.cl
+include pynx/cdi/cuda/*.cu
+include pynx/holotomo/opencl/*.cl
+include pynx/holotomo/cuda/*.cu
+include pynx/ptycho/opencl/*.cl
+include pynx/ptycho/cuda/*.cu
+include pynx/ptycho/bragg/opencl/*.cl
+include pynx/ptycho/bragg/cuda/*.cu
+include pynx/ptycho/bragg2d/opencl/*.cl
+include pynx/ptycho/bragg2d/cuda/*.cu
+include pynx/scattering/sse_mathfun.h
+include pynx/utils/opencl/*.cl
+include pynx/utils/cuda/*.cu
+include pynx/wavefront/opencl/*.cl
+include pynx/wavefront/cuda/*.cu

@@ -1,0 +1,21 @@
+From: Commissionning HERMES <com-hermes@hermes17.exp.synchrotron-soleil.fr>
+Date: Fri, 29 Oct 2021 10:44:17 +0200
+Subject: remove hdf5plugin from the install_requires
+
+---
+ setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/setup.py b/setup.py
+index 308d24f..f8fc142 100644
+--- a/setup.py
++++ b/setup.py
+@@ -117,7 +117,7 @@ setup(
+     python_requires='>=3.7',
+     setup_requires=setup_requires,
+     install_requires=['numpy>=1.12', 'scipy>=1.6.0', 'matplotlib', 'scikit-image',
+-                      'h5py>=2.9', 'hdf5plugin', 'fabio', 'silx', 'packaging', 'psutil', 'scikit-learn',
++                      'h5py>=2.9', 'fabio', 'silx', 'packaging', 'psutil', 'scikit-learn',
+                       'mako', 'pyopencl', 'pyvkfft'],
+     extras_require={'cuda': ['pycuda>=2021.1'], 'gid': ["cctbx"], 'mpi': ['mpi4py'],
+                     'doc': ['sphinx', 'nbsphinx', 'nbsphinx-link', 'sphinx-argparse'],

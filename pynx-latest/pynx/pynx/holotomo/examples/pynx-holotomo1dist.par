@@ -1,0 +1,101 @@
+#######################################################################
+#
+# Example parameter file for the analysis script pynx-holotomo1dist.py
+# This is a development (alpha) stage format, which will likely
+# change in the future.
+#
+#######################################################################
+
+# This file is executed as a python file to interpret all parameters
+# Some formulas using z1, z2, etc... may be used e.g.
+# to compute detector_distance and pixel_size
+
+#######################################################################
+#
+# Experiment & data parameters
+#
+#######################################################################
+
+data_dir = "/data/id16b/inhouse3/for_vincent/"
+prefix = "AZ31_K_tensileHR_001_1_"
+dark_name = prefix + "/dark.edf"
+ref_name = prefix + "/refHST0000.edf"
+img_prefix = prefix + "/AZ31_K_tensileHR_001_1_%04d.edf"
+
+# Prefix to save results
+prefix_result = prefix + "test_"
+
+# Projections range with 'first, last [, step]' (last excluded)
+# In order to optimise the illumination, it is important that
+# projections are as diverse as possible, and so spread over the entire
+# dataset. For example if a dataset of 720 projections needs to be
+# split in 4 parts, then the .par files for these parts should use:
+#  projection_range = 0, 720, 4  # projections 0,4,8 ...716
+#  projection_range = 1, 720, 4  # projections 1,5,9 ...717
+#  projection_range = 2, 720, 4  # projections 2,6,10...718
+#  projection_range = 3, 720, 4  # projections 3,7,11...719
+projection_range = 360, 720+1
+
+delta_beta = 280
+
+# Wavelength in meters
+wavelength = 12.3984e-10/17.5
+
+# Effective propagation distance in meters
+detector_distance = 0.03974013855416586
+
+# Effective Pixel size in meters (it will be multiplied by rebin_n)
+pixel_size = 9.97278e-08
+
+# binning parameter: 1 means no rebinning, otherwise binning n x n
+# is performed when reading data (no binning along projections axis)
+rebin_n = 1  # 2
+
+# Padding in pixels (small values are enough for local tomo)
+padding = 64
+
+#######################################################################
+#
+# PyNX parameters
+#
+#######################################################################
+
+# DM algorithm (will be applied first, less stable than AP)
+nb_dm = 0
+dm_smooth = 1.0  # smoothing regularisation in pixels
+
+# AP algorithm (will be applied second)
+nb_ap = 40
+ap_smooth = 0.5  # smoothing regularisation in pixels
+
+# This is the number of images handled in GPU memory at a time
+# It should be reduced if the images are not binned.
+# OK values (assuming DM and AP algorithms used):
+# 1280x1080: up to XXX projections
+# 2560x2060: up to 1500 frames
+# NB: this parameter should be automatically determined by the
+# analysis script, and will be eventually removed.
+stack_size = 72
+
+#######################################################################
+#
+# Export parameters (saving 3D volumes is very slow, 2GB files..)
+#
+#######################################################################
+
+# Save computed phases from pynx in one hdf5 file
+save_phase_chunks = False
+
+# Save edf files with phases in a sub-directory prefix_result+'_calc_images'
+save_edf = True
+
+# Compute FBP volume using Nabu and save it
+save_fbp_vol = False
+tomo_angular_step = 0.499307  # In degrees
+# Ideally this should be automatically determined ?
+tomo_rot_center = 635
+
+# Also compute & save volume using holotomo reconstructed data
+save_fbp_vol_ht = False
+# Prefix relative to data_dir
+img_prefix_ht = "calculated_images/AZ31_K_tensileHR_001_%04d.edf"

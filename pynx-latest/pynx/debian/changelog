@@ -1,0 +1,5 @@
+pynx (2021.1~b0-1) UNRELEASED; urgency=medium
+
+  * Initial release (Closes: #nnnn)
+
+ -- Picca Frédéric-Emmanuel <picca@debian.org>  Thu, 21 Sep 2017 13:13:04 +0200

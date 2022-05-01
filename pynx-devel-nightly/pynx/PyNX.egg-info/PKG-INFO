@@ -1,0 +1,33 @@
+Metadata-Version: 2.1
+Name: PyNX
+Version: 2021.1b0
+Summary: PyNX - GPU-accelerated python toolkit for coherent X-ray imaging and nano-crystallography
+Home-page: http://ftp.esrf.fr/pub/scisoft/PyNX/
+Author: vincefn
+Author-email: favre@esrf.fr
+License: CeCILL-B
+Description: PyNX provides Python tools for coherent X-ray imaging and nano-crystallography:       1) to compute the X-ray scattering for nano-structures, using GPU (CUDA or OpenCL) acceleration, including in grazing incidence conditions.      2) X-rays scattering atomic scattering factors      3) 2D X-ray wavefront propagation      4) tools for ptychography reconstruction      5) Coherent Diffraction Imaging (2D and 3D) reconstruction algorithms
+Keywords: PyNX GPU OpenCL CUDA crystallography diffraction scattering coherent X-rays Imaging ptychography CDI
+Platform: MacOS
+Platform: POSIX
+Platform: Linux
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Education
+Classifier: License :: License :: CEA CNRS Inria Logiciel Libre License B (CeCILL-B)
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Topic :: Scientific/Engineering :: Physics
+Classifier: Environment :: GPU :: NVIDIA CUDA
+Requires-Python: >=3.7
+Provides-Extra: cuda
+Provides-Extra: doc
+Provides-Extra: gid
+Provides-Extra: gui
+Provides-Extra: mpi
